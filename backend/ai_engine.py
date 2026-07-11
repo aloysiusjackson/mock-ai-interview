@@ -8,12 +8,15 @@ load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
+# Try to import google-generativeai, but don't fail if not available
+genai = None
 if GEMINI_API_KEY:
     try:
-        import google.generativeai as genai
-        genai.configure(api_key=GEMINI_API_KEY)
-    except ImportError:
-        print("Warning: google-generativeai package not found. Falling back to local NLP analysis.")
+        import google.generativeai as genai_module
+        genai_module.configure(api_key=GEMINI_API_KEY)
+        genai = genai_module
+    except (ImportError, Exception) as e:
+        print(f"Warning: google-generativeai not available ({e}). Falling back to local NLP analysis.")
         GEMINI_API_KEY = None
 
 def analyze_answer(question_text, category, optimal_keywords, expected_concepts, transcript):
@@ -42,7 +45,8 @@ def analyze_answer(question_text, category, optimal_keywords, expected_concepts,
         return analyze_locally(question_text, category, optimal_keywords, expected_concepts, transcript)
 
 def analyze_with_gemini(question_text, category, optimal_keywords, expected_concepts, transcript):
-    import google.generativeai as genai
+    if genai is None:
+        raise ImportError("google-generativeai not available")
     model = genai.GenerativeModel('gemini-1.5-flash')
     
     prompt = f"""
@@ -106,7 +110,8 @@ def generate_questions(role, count=3):
         return generate_questions_locally(role, count)
 
 def generate_questions_with_gemini(role, count=3):
-    import google.generativeai as genai
+    if genai is None:
+        raise ImportError("google-generativeai not available")
     model = genai.GenerativeModel('gemini-1.5-flash')
     
     prompt = f"""
