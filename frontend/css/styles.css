@@ -1781,6 +1781,8 @@ body {
 }
 
 /* Responsive styles */
+/* ===================== RESPONSIVE / MOBILE STYLES ===================== */
+/* Tablet - Medium screens */
 @media (max-width: 1200px) {
     .grid-container {
         gap: 1rem;
@@ -1814,30 +1816,316 @@ body {
     .history-card-item .summary-text {
         grid-column: span 2;
     }
+    .assessment-levels {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
+/* Mobile - Small screens */
 @media (max-width: 768px) {
+    /* Layout */
     .app-container {
         flex-direction: column;
+        height: auto;
+        min-height: 100vh;
     }
     .sidebar {
         width: 100%;
         height: auto;
-        padding: 1rem;
+        padding: 0.75rem 1rem;
         border-right: none;
         border-bottom: 1px solid var(--border-glass);
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
     }
     .brand {
-        margin-bottom: 1rem;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+    .brand-name {
+        display: none;
+    }
+    .brand-logo {
+        width: 34px;
+        height: 34px;
+    }
+    .brand-logo svg {
+        width: 18px;
+        height: 18px;
     }
     .nav-menu {
         flex-direction: row;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 0.25rem;
+        padding-bottom: 0.25rem;
+        -webkit-overflow-scrolling: touch;
     }
+    .nav-menu::-webkit-scrollbar {
+        height: 2px;
+    }
+    .nav-menu::-webkit-scrollbar-thumb {
+        background: var(--border-glass);
+        border-radius: 2px;
+    }
+    .nav-item {
+        flex-shrink: 0;
+    }
+    .nav-link {
+        padding: 0.5rem 0.65rem;
+        font-size: 0.75rem;
+        gap: 0.35rem;
+        white-space: nowrap;
+    }
+    .nav-link svg {
+        width: 16px;
+        height: 16px;
+    }
+    .sidebar-footer {
+        display: none;
+    }
+    
+    /* Main content */
     .main-content {
-        padding: 1.5rem;
+        padding: 1rem;
+        height: auto;
+        overflow-y: visible;
     }
+    .topbar {
+        margin-bottom: 1.25rem;
+    }
+    .page-title h1 {
+        font-size: 1.25rem;
+    }
+    .page-title p {
+        font-size: 0.8rem;
+    }
+    
+    /* Metrics */
+    .metric-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    .metric-card {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+    .metric-icon {
+        width: 40px;
+        height: 40px;
+    }
+    .metric-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+    .metric-val {
+        font-size: 1.3rem;
+    }
+    .metric-label {
+        font-size: 0.7rem;
+    }
+    
+    /* Cards */
+    .card {
+        padding: 1rem;
+    }
+    .card-header-flex h3 {
+        font-size: 0.95rem;
+    }
+    
+    /* Charts */
+    .chart-container-large,
+    .chart-container-small {
+        height: 260px;
+    }
+    
+    /* Form elements */
+    .form-select, .form-input {
+        padding: 0.7rem 0.85rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Buttons */
+    .btn {
+        padding: 0.65rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    /* Interview Room Mobile */
+    .interview-grid {
+        grid-template-columns: 1fr;
+        height: auto;
+        gap: 1rem;
+    }
+    .camera-feed-container {
+        height: 300px;
+    }
+    .teleprompter-overlay {
+        padding: 1rem;
+    }
+    .teleprompter-text {
+        font-size: 1rem;
+    }
+    .interview-controls {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+    .control-center-btns {
+        width: 100%;
+    }
+    .control-center-btns .btn {
+        flex: 1;
+        font-size: 0.8rem;
+        padding: 0.6rem 0.75rem;
+    }
+    .side-panel {
+        height: auto;
+    }
+    .live-transcript-card {
+        height: 180px;
+    }
+    
+    /* Interviewer avatar */
+    .interviewer-avatar-ring {
+        width: 70px;
+        height: 70px;
+    }
+    .interviewer-avatar {
+        font-size: 1.8rem;
+    }
+    .interviewer-name {
+        font-size: 0.95rem;
+    }
+    .connection-badge {
+        top: 0.75rem;
+        left: 0.75rem;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.65rem;
+    }
+    .call-timer {
+        top: 0.75rem;
+        right: 0.75rem;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.7rem;
+    }
+    .mic-status-badge {
+        bottom: 3.5rem;
+        left: 0.75rem;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.65rem;
+    }
+    
+    /* Feedback View Mobile */
+    .feedback-grid {
+        grid-template-columns: 1fr;
+    }
+    .q-fb-body {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .q-fb-subscores,
+    .transcript-section,
+    .actionable-tips-box {
+        grid-column: span 1;
+    }
+    .q-fb-subscores {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .q-fb-title {
+        font-size: 0.9rem;
+        max-width: 70%;
+    }
+    
+    /* History Mobile */
+    .history-card-item {
+        grid-template-columns: 1fr auto;
+        gap: 0.5rem;
+        padding: 1rem;
+    }
+    .history-card-item .role {
+        font-size: 0.9rem;
+    }
+    .history-card-item .date {
+        font-size: 0.8rem;
+        grid-column: span 2;
+    }
+    .history-card-item .summary-text {
+        display: none;
+    }
+    
+    /* Assessment Mobile */
+    .assessment-levels {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Resources Mobile */
+    .resource-card {
+        grid-column: span 12 !important;
+    }
+    
+    /* Achievements Mobile */
+    .achievement-card {
+        grid-column: span 12 !important;
+    }
+    
+    .settings-toggle-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    /* Score Board Mobile */
+    .score-summary-item {
+        padding: 0.5rem 0;
+    }
+}
+
+/* Small phones - Extra small screens */
+@media (max-width: 480px) {
     .metric-row {
         grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+    .metric-card {
+        padding: 0.75rem;
+    }
+    .metric-icon {
+        width: 34px;
+        height: 34px;
+    }
+    .metric-val {
+        font-size: 1.1rem;
+    }
+    
+    .main-content {
+        padding: 0.75rem;
+    }
+    
+    .camera-feed-container {
+        height: 240px;
+    }
+    
+    .nav-link {
+        padding: 0.4rem 0.5rem;
+        font-size: 0.7rem;
+    }
+    .nav-link svg {
+        width: 14px;
+        height: 14px;
+    }
+    
+    .q-fb-subscores {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .btn {
+        padding: 0.55rem 0.85rem;
+        font-size: 0.8rem;
+    }
+    
+    .page-title h1 {
+        font-size: 1.1rem;
     }
 }
