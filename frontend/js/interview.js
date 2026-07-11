@@ -392,7 +392,7 @@ const interview = {
         transcriptCard.appendChild(feedbackEl);
 
         try {
-            // Try backend auto-grade endpoint
+            // Try backend auto-grade endpoint - use defaults for optional fields
             const gradeResult = await api.autoGrade({
                 transcript: transcript,
                 question_text: currentQ.question_text,
@@ -400,6 +400,9 @@ const interview = {
                 optimal_keywords: currentQ.optimal_keywords || '',
                 expected_concepts: currentQ.expected_concepts || ''
             });
+            if (!gradeResult || gradeResult.error) {
+                throw new Error(gradeResult?.error || 'Auto-grade failed');
+            }
 
             // Show the grade result immediately
             feedbackEl.innerHTML = `
@@ -554,13 +557,6 @@ const interview = {
         app.showLoader('Analyzing transcript answers, calculating clarity subscores, and compiling actionable tips...');
 
         try {
-            // Attach anti-cheat flags to submission
-            const submitData = {
-                role: this.state.role,
-                answers: this.state.answers,
-                anti_cheat: integrityReport
-            };
-            
             const result = await api.submitInterview(this.state.role, this.state.answers);
             
             // Add integrity info to result for display

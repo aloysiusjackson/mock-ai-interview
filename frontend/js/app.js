@@ -603,7 +603,7 @@ const app = {
         this.updateTopbarForView('feedback-view');
 
         // Title and summary details
-        document.getElementById('feedback-role').textContent = `${result.role} Interview Results`;
+        document.getElementById('feedback-role').textContent = `${result.role || interview.state.role || 'Mock'} Interview Results`;
         document.getElementById('feedback-date').textContent = result.date;
         document.getElementById('feedback-summary').textContent = result.summary;
 
@@ -777,7 +777,7 @@ const app = {
                     <div class="role">${item.role} Practice</div>
                     <div class="date">${item.date}</div>
                     <div class="score-badge ${scoreClass}">${item.overall_score}%</div>
-                    <div class="summary-text">${data.history.find(h => h.id === item.id)?.summary || 'Review feedback metrics details'}</div>
+                    <div class="summary-text">Click to review detailed feedback and metrics</div>
                     <button class="btn btn-secondary" style="padding:0.5rem 1rem; font-size:0.85rem;">View Review</button>
                 `;
 

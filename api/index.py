@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import sqlite3
+import traceback
 from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
@@ -9,8 +10,42 @@ from flask_cors import CORS
 # Add backend to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 
-from ai_engine import analyze_answer, generate_questions
+try:
+    from ai_engine import analyze_answer, generate_questions
+except ImportError as e:
+    print(f"Warning: Could not import ai_engine: {e}")
+    print("Falling back to local-only analysis (no AI grading)")
+    # Define fallback functions
+    def generate_questions(role, count=3):
+        return []
+    def analyze_answer(question_text, category, optimal_keywords, expected_concepts, transcript):
+        return analyze_locally_fallback(question_text, category, optimal_keywords, expected_concepts, transcript)
 
+    def analyze_locally_fallback(question_text, category, optimal_keywords, expected_concepts, transcript):
+        import re
+        words = transcript.lower().split()
+        word_count = len(words)
+        filler_words = ["um", "uh", "like", "actually", "basically", "so", "you know", "sort of", "stuff"]
+        filler_count = sum(len(re.findall(rf"\b{re.escape(f)}\b", transcript.lower())) for f in filler_words)
+        keyword_list = [k.strip().lower() for k in optimal_keywords.split(",")] if optimal_keywords else []
+        matches_found = [kw for kw in keyword_list if re.search(rf"\b{re.escape(kw)}\b", transcript.lower())]
+        keyword_match_ratio = len(matches_found) / len(keyword_list) if keyword_list else 1.0
+        relevance = int(40 + (keyword_match_ratio * 60))
+        if word_count < 15:
+            relevance = max(10, relevance - 30)
+        filler_ratio = filler_count / max(1, word_count)
+        filler_penalty = min(40, int(filler_ratio * 150))
+        clarity = max(20, min(100, (95 - filler_penalty) if word_count >= 25 else (50 - filler_penalty)))
+        grammar = max(30, min(100, 95 - filler_penalty - (5 if word_count < 15 else 0)))
+        if category == "Technical":
+            score = int((relevance * 0.5) + (clarity * 0.3) + (grammar * 0.2))
+        else:
+            score = int((relevance * 0.3) + (clarity * 0.4) + (grammar * 0.3))
+        score = max(0, min(100, score))
+        return {"score": score, "clarity": clarity, "grammar": grammar, "relevance": relevance, "filler_count": filler_count, "strengths": ["Provided response"], "weaknesses": ["Consider elaborating more"], "tips": ["Use specific examples in your answers"]}
+
+# Note: On Vercel, the frontend static files are served by Vercel's static file serving 
+# (configured in vercel.json). The Flask app only handles API routes.
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), '..', 'frontend'))
 CORS(app)
 
@@ -164,23 +199,21 @@ def seed_users_and_history(cursor):
     ''', (interview_1_id, json.dumps(fb_q2)))
 
 
-# Initialize DB on first import
-init_db()
-
-# Serve frontend
-@app.route('/')
-def serve_index():
-    return send_from_directory(app.static_folder, 'index.html')
-
-@app.route('/<path:path>')
-def serve_static(path):
-    return send_from_directory(app.static_folder, path)
-
 # ============ API Routes ============
+
+# Lazy database initialization - only runs when first API call is made
+_db_initialized = False
+
+def ensure_db():
+    global _db_initialized
+    if not _db_initialized:
+        init_db()
+        _db_initialized = True
 
 @app.route('/api/roles', methods=['GET'])
 def get_roles():
     try:
+        ensure_db()
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT DISTINCT role FROM questions")
@@ -196,6 +229,7 @@ def get_questions():
     limit = request.args.get('limit', 3, type=int)
     
     try:
+        ensure_db()
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute(
@@ -244,6 +278,7 @@ def submit_interview():
         return jsonify({"error": "Missing role or answers"}), 400
 
     try:
+        ensure_db()
         conn = get_db_connection()
         cursor = conn.cursor()
         graded_answers = []
@@ -343,6 +378,7 @@ def auto_grade():
 def get_dashboard():
     user_id = request.args.get('user_id', 1, type=int)
     try:
+        ensure_db()
         conn = get_db_connection()
         cursor = conn.cursor()
 
@@ -416,6 +452,7 @@ def get_dashboard():
 @app.route('/api/interview/<int:interview_id>', methods=['GET'])
 def get_interview_detail(interview_id):
     try:
+        ensure_db()
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT id, role, date, overall_score, summary FROM interviews WHERE id = ?", (interview_id,))
