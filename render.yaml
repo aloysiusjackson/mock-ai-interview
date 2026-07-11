@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: mock-ai-interview
+    env: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && python app.py
