@@ -939,7 +939,7 @@ body {
 
 /* ===================== SKILL ASSESSMENT VIEW ===================== */
 #assessment-view {
-    animation: fadeSlideIn 0.5s var(--ease-smooth) forwards;
+     animation: fadeSlideIn 0.5s var(--ease-smooth) forwards;
 }
 
 .assessment-levels {
@@ -1780,10 +1780,18 @@ body {
     gap: 0.25rem;
 }
 
+/* Mobile Menu Button - Hidden on Desktop by default */
+.mobile-menu-btn {
+    display: none;
+}
+
 /* Responsive styles */
 /* ===================== RESPONSIVE / MOBILE STYLES ===================== */
 /* Tablet - Medium screens */
 @media (max-width: 1200px) {
+    :root {
+        --sidebar-width: 220px;
+    }
     .grid-container {
         gap: 1rem;
     }
@@ -1805,6 +1813,7 @@ body {
     }
     .camera-feed-container {
         height: 400px;
+        min-height: 300px;
     }
     .feedback-grid {
         grid-template-columns: 1fr;
@@ -1817,7 +1826,7 @@ body {
         grid-column: span 2;
     }
     .assessment-levels {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -1838,6 +1847,7 @@ body {
         flex-direction: row;
         align-items: center;
         gap: 0.5rem;
+        position: relative;
     }
     .brand {
         margin-bottom: 0;
@@ -1854,33 +1864,57 @@ body {
         width: 18px;
         height: 18px;
     }
-    .nav-menu {
-        flex-direction: row;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        gap: 0.25rem;
-        padding-bottom: 0.25rem;
-        -webkit-overflow-scrolling: touch;
+    
+    /* Mobile menu button */
+    .mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-glass);
+        color: var(--text-primary);
     }
-    .nav-menu::-webkit-scrollbar {
-        height: 2px;
+    .mobile-menu-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: var(--border-active);
     }
-    .nav-menu::-webkit-scrollbar-thumb {
-        background: var(--border-glass);
-        border-radius: 2px;
+    .mobile-menu-btn svg {
+        width: 20px;
+        height: 20px;
     }
-    .nav-item {
-        flex-shrink: 0;
+    
+    /* Mobile nav - hidden by default, shown when active */
+    .mobile-nav {
+        width: 100%;
     }
-    .nav-link {
-        padding: 0.5rem 0.65rem;
-        font-size: 0.75rem;
-        gap: 0.35rem;
-        white-space: nowrap;
+    
+    /* Hidden on mobile by default */
+    .mobile-nav .nav-menu {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        padding: 0.5rem 0;
+        gap: 0.5rem;
     }
-    .nav-link svg {
-        width: 16px;
-        height: 16px;
+    
+    /* Show nav menu when mobile-nav is active */
+    .mobile-nav.active .nav-menu {
+        display: flex;
+    }
+    
+    .mobile-nav .nav-link {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .mobile-nav .nav-link svg {
+        width: 20px;
+        height: 20px;
     }
     .sidebar-footer {
         display: none;
@@ -1960,6 +1994,7 @@ body {
     }
     .camera-feed-container {
         height: 300px;
+        min-height: 200px;
     }
     .teleprompter-overlay {
         padding: 1rem;
@@ -1974,6 +2009,8 @@ body {
     }
     .control-center-btns {
         width: 100%;
+        display: flex;
+        gap: 0.5rem;
     }
     .control-center-btns .btn {
         flex: 1;
@@ -1988,6 +2025,10 @@ body {
     }
     
     /* Interviewer avatar */
+    .interviewer-avatar-section {
+        transform: translate(-50%, -50%);
+        top: 50%;
+    }
     .interviewer-avatar-ring {
         width: 70px;
         height: 70px;
@@ -2011,7 +2052,7 @@ body {
         font-size: 0.7rem;
     }
     .mic-status-badge {
-        bottom: 3.5rem;
+        bottom: 2.5rem;
         left: 0.75rem;
         padding: 0.3rem 0.6rem;
         font-size: 0.65rem;
@@ -2057,7 +2098,11 @@ body {
     
     /* Assessment Mobile */
     .assessment-levels {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+    .level-card {
+        padding: 1rem 0.75rem;
     }
     
     /* Resources Mobile */
@@ -2105,11 +2150,12 @@ body {
     
     .camera-feed-container {
         height: 240px;
+        min-height: 180px;
     }
     
     .nav-link {
         padding: 0.4rem 0.5rem;
-        font-size: 0.7rem;
+        font-size: 0.65rem;
     }
     .nav-link svg {
         width: 14px;
@@ -2127,5 +2173,22 @@ body {
     
     .page-title h1 {
         font-size: 1.1rem;
+    }
+    
+    /* Interviewer avatar small phones */
+    .interviewer-avatar-ring {
+        width: 60px;
+        height: 60px;
+    }
+    .interviewer-avatar {
+        font-size: 1.5rem;
+    }
+    .mobile-menu-btn {
+        width: 32px;
+        height: 32px;
+    }
+    .mobile-menu-btn svg {
+        width: 18px;
+        height: 18px;
     }
 }

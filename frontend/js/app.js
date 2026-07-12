@@ -12,9 +12,25 @@ const app = {
 
     setupNavigation() {
         const navLinks = document.querySelectorAll('.nav-link');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileNav = document.getElementById('mobile-nav');
+        
+        // Mobile menu toggle functionality
+        if (mobileMenuBtn && mobileNav) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileNav.classList.toggle('active');
+                mobileMenuBtn.classList.toggle('active');
+            });
+        }
         
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
+                // Close mobile menu when link is clicked
+                if (mobileNav && mobileNav.classList.contains('active')) {
+                    mobileNav.classList.remove('active');
+                    mobileMenuBtn.classList.remove('active');
+                }
+                
                 e.preventDefault();
                 
                 // If exiting interview view unexpectedly, cleanup streams
@@ -35,12 +51,12 @@ const app = {
                 // Update topbar context based on view
                 this.updateTopbarForView(targetId);
 
-                // Load appropriate module data
-                if (targetId === 'dashboard-view') {
-                    dashboard.load();
-                } else if (targetId === 'scoreboard-view') {
-                    scoreboard.load();
-                } else if (targetId === 'history-view') {
+                 // Load appropriate module data
+                 if (targetId === 'dashboard-view') {
+                     dashboard.load();
+                 } else if (targetId === 'scoreboard-view') {
+                     scoreboard.load(); // Added awaits for async functions
+                 } else if (targetId === 'history-view') {
                     this.loadFullHistory();
                 } else if (targetId === 'achievements-view') {
                     this.loadAchievements();
@@ -789,7 +805,7 @@ const app = {
             });
         } catch (error) {
             console.error('Failed to load history metrics:', error);
-            tableBody.innerHTML = '<div style="padding:2rem; text-align:center; color:var(--danger);">Error connecting to database. Please check your backend is running.</div>';
+            tableBody.innerHTML = '<div style="padding:2rem; text-align:center; color:var(--danger);">Error connecting to the database. Please check your backend is running on port 5000.</div>';
         }
     },
 
@@ -800,7 +816,7 @@ const app = {
         try {
             const data = await api.getDashboard();
             const totalSessions = data.metrics?.total_interviews || 0;
-            const avgScore = data.metrics?.avg_score || 0;
+            const avgScore = data.metrics?.average_score || 0;
             
             // Count unlocked achievements
             let unlocked = 0;

@@ -128,14 +128,11 @@ const dashboard = {
     },
 
     renderFallback() {
-        console.warn('Backend server unreachable. Displaying local demo mode data.');
-        
-        // Mock data structure
-        const mockDashboardData = {
-            user: {
-                name: "Demo Candidate",
-                target_role: "Software Engineer"
-            },
+        const mockData = {
+            progression: [
+                { date: "Jul 05, 2026", score: 72.5 },
+                { date: "Jul 07, 2026", score: 84.0 }
+            ],
             metrics: {
                 total_interviews: 2,
                 average_score: 78.3,
@@ -147,20 +144,20 @@ const dashboard = {
                 },
                 categories: {
                     "Behavioral": 72.5,
-                    "Technical": 84.0
+                    "Technical": 84.0,
+                    "Situational": 0
                 }
             },
-            progression: [
-                { date: "Jul 05, 2026", score: 72.5 },
-                { date: "Jul 07, 2026", score: 84.0 }
-            ],
+            user: {
+                name: "Demo User",
+                target_role: "Software Engineer"
+            },
             history: [
                 { id: 2, role: "Software Engineer", date: "Jul 07, 2026", overall_score: 84.0 },
                 { id: 1, role: "Software Engineer", date: "Jul 05, 2026", overall_score: 72.5 }
             ]
         };
-
-        this.render(mockDashboardData);
+        this.render(mockData);
     }
 };
 
@@ -195,8 +192,8 @@ const scoreboard = {
         // Render progression chart
         this.renderProgressionChart(progression);
 
-        // Render category chart
-        this.renderCategoryChart(data.metrics.subscores);
+        // Render category chart (use categories data, not subscores)
+        this.renderCategoryChart(data.metrics.categories);
 
         // Render score history list
         this.renderScoreHistory(data.history);
@@ -279,19 +276,29 @@ const scoreboard = {
         });
     },
 
-    renderCategoryChart(subscores) {
+    renderCategoryChart(categories) {
         const ctx = document.getElementById('scoreboardCategoryChart').getContext('2d');
         
         if (this.scoreboardCategoryChart) {
             this.scoreboardCategoryChart.destroy();
         }
 
+        // Handle categories data (Behavioral, Technical, Situational) or fallback to subscores
+        const chartData = {
+            labels: ['Behavioral', 'Technical', 'Situational'],
+            values: [
+                categories?.Behavioral || 0,
+                categories?.Technical || 0,
+                categories?.Situational || 0
+            ]
+        };
+
         this.scoreboardCategoryChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Clarity', 'Grammar', 'Relevance'],
+                labels: chartData.labels,
                 datasets: [{
-                    data: [subscores.clarity, subscores.grammar, subscores.relevance],
+                    data: chartData.values,
                     backgroundColor: ['#6366f1', '#10b981', '#f59e0b'],
                     borderWidth: 0,
                     hoverOffset: 10
@@ -362,8 +369,18 @@ const scoreboard = {
                 subscores: {
                     clarity: 78.5,
                     grammar: 85.0,
-                    relevance: 71.4
+                    relevance: 71.4,
+                    avg_fillers_per_answer: 3.5
+                },
+                categories: {
+                    "Behavioral": 72.5,
+                    "Technical": 84.0,
+                    "Situational": 0
                 }
+            },
+            user: {
+                name: "Demo User",
+                target_role: "Software Engineer"
             },
             history: [
                 { id: 2, role: "Software Engineer", date: "Jul 07, 2026", overall_score: 84.0 },
